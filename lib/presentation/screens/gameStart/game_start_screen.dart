@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:tutti_frutti/presentation/screens.dart';
 
 class GameStartScreen extends StatefulWidget {
   static const String name = 'game_start';
@@ -28,8 +30,15 @@ class _GameStartScreenState extends State<GameStartScreen> {
                   agregarColumna(value);
                 },
               ),
+              const SizedBox(height: 20),
+              FloatingActionButton(
+                  onPressed: () {
+                    context.pushNamed(GameScreen.name);
+                  },
+                  child: const Text('Listo')),
               ...columnas.map((col) => ListTile(
-                  leading: Icon(Icons.data_array_sharp), title: Text(col)))
+                  leading: const Icon(Icons.data_array_sharp),
+                  title: Text(col)))
             ],
           ),
         ));
