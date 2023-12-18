@@ -20,15 +20,18 @@ class _GameStartScreenState extends State<GameStartScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(title: const Text('Comenzar Partida')),
-        body: Column(
-          children: [
-            TextField(
-              onSubmitted: (value) {
-                agregarColumna(value);
-              },
-            ),
-            ...columnas.map((col) => Text(col))
-          ],
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              TextField(
+                onSubmitted: (value) {
+                  agregarColumna(value);
+                },
+              ),
+              ...columnas.map((col) => ListTile(
+                  leading: Icon(Icons.data_array_sharp), title: Text(col)))
+            ],
+          ),
         ));
   }
 }
