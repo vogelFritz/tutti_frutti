@@ -13,31 +13,22 @@ class GameStartScreen extends ConsumerWidget {
     final fields = ref.watch(fieldProvider);
     return Scaffold(
         appBar: AppBar(title: const Text('Comenzar Partida')),
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              TextField(
-                onSubmitted: (value) {
-                  ref.read(fieldProvider.notifier).state.add(value);
-                },
-              ),
-              const SizedBox(height: 20),
-              FloatingActionButton(
-                  onPressed: () {
-                    context.pushNamed(GameScreen.name);
-                  },
-                  child: const Text('Listo')),
-              //SingleChildScrollView(
-              //  child: ListView.builder(
-              //      itemBuilder: (context, index) => ListTile(
-              //          leading: const Icon(Icons.data_array_sharp),
-              //          title: Text(fields[index]))),
-              //)
-              ...fields.map((field) => ListTile(
-                  leading: const Icon(Icons.data_array_sharp),
-                  title: Text(field)))
-            ],
-          ),
-        ));
+        body: ListView.builder(
+            itemCount: fields.length + 2,
+            itemBuilder: (context, index) {
+              return (index == 0)
+                  ? TextField(
+                      onSubmitted: (value) {
+                        ref.read(fieldProvider.notifier).state.add(value);
+                      },
+                    )
+                  : (index < fields.length + 1)
+                      ? ListTile(title: Text(fields[index - 1]))
+                      : FilledButton(
+                          onPressed: () {
+                            context.pushNamed(GameScreen.name);
+                          },
+                          child: const Text('Listo'));
+            }));
   }
 }

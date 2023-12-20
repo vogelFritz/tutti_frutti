@@ -8,7 +8,7 @@ class GameScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Row(
+      body: const Row(
         children: [],
       ),
       floatingActionButton: FloatingActionButton(
