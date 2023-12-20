@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'dart:math';
 
 import 'package:tutti_frutti/presentation/providers/field_provider.dart';
@@ -12,19 +11,15 @@ class GameScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final displayLarge = Theme.of(context).textTheme.displayLarge;
     final alphabet =
         List.generate(26, (index) => String.fromCharCode(index + 65));
     final random = Random();
     final fields = ref.watch(fieldProvider);
     return Scaffold(
       backgroundColor: Colors.blueGrey,
-      body: Column(children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 20),
-          child: Center(
-              child: Text(alphabet[random.nextInt(alphabet.length)],
-                  style: const TextStyle(fontSize: 30))),
-        ),
+      body: Stack(children: [
+        Text(alphabet[random.nextInt(alphabet.length)], style: displayLarge),
         _Columns(fields: fields),
       ]),
       floatingActionButton: const GoBackButton(),
@@ -38,13 +33,19 @@ class _Columns extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-      ...fields.map((field) => Column(
-            children: [
-              Text(field),
-              const SizedBox(width: 50, height: 20, child: TextField())
-            ],
-          ))
-    ]);
+    final displaySmallTextStyle = Theme.of(context).textTheme.displaySmall;
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        ...fields.map((field) => SizedBox(
+            width: 200,
+            height: 60,
+            child: TextField(
+                decoration: InputDecoration(
+                    label: Text(field, style: displaySmallTextStyle),
+                    filled: true,
+                    border: const OutlineInputBorder()))))
+      ],
+    );
   }
 }
