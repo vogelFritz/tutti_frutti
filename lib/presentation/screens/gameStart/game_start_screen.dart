@@ -10,25 +10,25 @@ class GameStartScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final fields = ref.watch(fieldProvider);
     return Scaffold(
         appBar: AppBar(title: const Text('Comenzar Partida')),
-        body: ListView.builder(
-            itemCount: fields.length + 2,
-            itemBuilder: (context, index) {
-              return (index == 0)
-                  ? TextField(
-                      onSubmitted: (value) {
-                        ref.read(fieldProvider.notifier).state.add(value);
-                      },
-                    )
-                  : (index < fields.length + 1)
-                      ? ListTile(title: Text(fields[index - 1]))
-                      : FilledButton(
-                          onPressed: () {
-                            context.pushNamed(GameScreen.name);
-                          },
-                          child: const Text('Listo'));
-            }));
+        body: Column(children: [
+          TextField(
+            onSubmitted: (value) {
+              ref.read(fieldProvider.notifier).state.add(value);
+            },
+          ),
+          Consumer(builder: (context, ref, _) {
+            final updatedFields = ref.watch(fieldProvider);
+            return Wrap(
+                spacing: 10,
+                children: [...updatedFields.map((field) => Text(field))]);
+          }),
+          FilledButton(
+              onPressed: () {
+                context.pushNamed(GameScreen.name);
+              },
+              child: const Text('Listo'))
+        ]));
   }
 }
