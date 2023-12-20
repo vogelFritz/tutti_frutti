@@ -10,12 +10,16 @@ class GameStartScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final textController = TextEditingController();
     return Scaffold(
         appBar: AppBar(title: const Text('Comenzar Partida')),
         body: Column(children: [
           TextField(
+            controller: textController,
             onSubmitted: (value) {
               ref.read(fieldProvider.notifier).state.add(value);
+              textController.clear();
+              //textController.notifyListeners();
             },
           ),
           Consumer(builder: (context, ref, _) {
