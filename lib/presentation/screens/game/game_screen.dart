@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'dart:math';
 
 import 'package:tutti_frutti/presentation/providers/field_provider.dart';
+import 'package:tutti_frutti/presentation/widgets/buttons.dart';
 
 class GameScreen extends ConsumerWidget {
   static const String name = 'game';
@@ -16,6 +17,7 @@ class GameScreen extends ConsumerWidget {
     final random = Random();
     final fields = ref.watch(fieldProvider);
     return Scaffold(
+      backgroundColor: Colors.blueGrey,
       body: Column(children: [
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 20),
@@ -25,11 +27,7 @@ class GameScreen extends ConsumerWidget {
         ),
         _Columns(fields: fields),
       ]),
-      floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            context.pop();
-          },
-          child: const Icon(Icons.arrow_back_sharp)),
+      floatingActionButton: const GoBackButton(),
     );
   }
 }
