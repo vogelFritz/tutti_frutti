@@ -40,11 +40,11 @@ class _Columns extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(children: [
+    return Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
       ...fields.map((field) => Column(
             children: [
               Text(field),
-              SizedBox(width: 50, height: 20, child: const TextField())
+              const SizedBox(width: 50, height: 20, child: TextField())
             ],
           ))
     ]);
