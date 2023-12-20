@@ -19,8 +19,16 @@ class GameScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: Colors.blueGrey,
       body: Stack(children: [
-        Text(alphabet[random.nextInt(alphabet.length)], style: displayLarge),
-        _Columns(fields: fields),
+        Align(
+            alignment: Alignment.topRight,
+            child: Text(alphabet[random.nextInt(alphabet.length)],
+                style: displayLarge)),
+        Align(
+            alignment: Alignment.topLeft,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(20, 20, 0, 40),
+              child: _Columns(fields: fields),
+            )),
       ]),
       floatingActionButton: const GoBackButton(),
     );
@@ -35,16 +43,18 @@ class _Columns extends StatelessWidget {
   Widget build(BuildContext context) {
     final displaySmallTextStyle = Theme.of(context).textTheme.displaySmall;
     return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        ...fields.map((field) => SizedBox(
-            width: 200,
-            height: 60,
-            child: TextField(
-                decoration: InputDecoration(
-                    label: Text(field, style: displaySmallTextStyle),
-                    filled: true,
-                    border: const OutlineInputBorder()))))
+        ...fields.map((field) => Padding(
+              padding: const EdgeInsets.fromLTRB(0, 0, 0, 60),
+              child: SizedBox(
+                  width: 400,
+                  height: 60,
+                  child: TextField(
+                      decoration: InputDecoration(
+                          label: Text(field, style: displaySmallTextStyle),
+                          filled: true,
+                          border: const OutlineInputBorder()))),
+            ))
       ],
     );
   }
