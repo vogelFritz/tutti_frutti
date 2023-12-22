@@ -21,8 +21,11 @@ class GameScreen extends ConsumerWidget {
       body: Stack(children: [
         Align(
             alignment: Alignment.topRight,
-            child: Text(alphabet[random.nextInt(alphabet.length)],
-                style: displayLarge)),
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Text(alphabet[random.nextInt(alphabet.length)],
+                  style: displayLarge),
+            )),
         Align(
             alignment: Alignment.topLeft,
             child: Padding(

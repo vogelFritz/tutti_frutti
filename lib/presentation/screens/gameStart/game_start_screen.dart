@@ -5,7 +5,7 @@ import 'package:tutti_frutti/presentation/providers/field_provider.dart';
 import 'package:tutti_frutti/presentation/screens.dart';
 import 'package:tutti_frutti/presentation/widgets/buttons.dart';
 
-class GameStartScreen extends ConsumerWidget {
+class GameStartScreen extends ConsumerStatefulWidget {
   static const String name = 'game_start';
   const GameStartScreen({super.key});
 
@@ -43,5 +43,11 @@ class GameStartScreen extends ConsumerWidget {
       ),
       floatingActionButton: const GoBackButton(),
     );
+  }
+
+  @override
+  ConsumerState<ConsumerStatefulWidget> createState() {
+    // TODO: implement createState
+    throw UnimplementedError();
   }
 }
