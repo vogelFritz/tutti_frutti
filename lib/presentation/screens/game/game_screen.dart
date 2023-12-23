@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:math';
@@ -28,12 +26,23 @@ class GameScreen extends ConsumerWidget {
               child: _CustomColumn(fields: fields),
             )),
         Align(
-            alignment: Alignment.topRight,
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
+          alignment: Alignment.topRight,
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Container(
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.black, width: 5),
+                color: Colors.lightGreenAccent,
+                shape: BoxShape.circle,
+              ),
+              width: 100,
+              height: 100,
               child: Text(alphabet[random.nextInt(alphabet.length)],
-                  style: displayLarge),
-            )),
+                  style: displayLarge!.copyWith(color: Colors.black)),
+            ),
+          ),
+        ),
       ]),
       floatingActionButton: const GoBackButton(),
     );
