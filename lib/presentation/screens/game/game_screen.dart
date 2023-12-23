@@ -20,17 +20,17 @@ class GameScreen extends ConsumerWidget {
       backgroundColor: Colors.blueGrey,
       body: Stack(children: [
         Align(
+            alignment: Alignment.topLeft,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(20, 50, 0, 40),
+              child: _CustomColumn(fields: fields),
+            )),
+        Align(
             alignment: Alignment.topRight,
             child: Padding(
               padding: const EdgeInsets.all(20.0),
               child: Text(alphabet[random.nextInt(alphabet.length)],
                   style: displayLarge),
-            )),
-        Align(
-            alignment: Alignment.topLeft,
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(20, 20, 0, 40),
-              child: _CustomColumn(fields: fields),
             )),
       ]),
       floatingActionButton: const GoBackButton(),
@@ -39,7 +39,7 @@ class GameScreen extends ConsumerWidget {
 }
 
 class _CustomColumn extends StatelessWidget {
-  final List<dynamic> fields;
+  final List<String> fields;
   const _CustomColumn({required this.fields});
 
   @override

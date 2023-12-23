@@ -24,6 +24,7 @@ class GameStartState extends ConsumerState<GameStartScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final defaultValues = ['Nombres', 'Frutas', 'Comida', 'Países', 'Colores'];
     final textController = TextEditingController();
     return Scaffold(
       backgroundColor: Colors.blueGrey,
@@ -44,15 +45,34 @@ class GameStartState extends ConsumerState<GameStartScreen> {
           ),
           Consumer(builder: (context, ref, _) {
             final updatedFields = ref.watch(fieldProvider);
-            return Wrap(
-                spacing: 10,
-                children: [...updatedFields.map((field) => Text(field))]);
+            return Wrap(spacing: 10, children: [
+              ...updatedFields.map((field) => Text(field)),
+              (updatedFields.isNotEmpty)
+                  ? IconButton(
+                      onPressed: () {
+                        ref.read(fieldProvider.notifier).state.clear();
+                        setState(() {});
+                      },
+                      icon: const Icon(Icons.delete))
+                  : const SizedBox()
+            ]);
           }),
           FilledButton(
               onPressed: () {
                 context.pushNamed(GameScreen.name);
               },
-              child: const Text('Listo'))
+              child: const Text('Listo')),
+          TextButton(
+              onPressed: () {
+                ref.read(fieldProvider.notifier).state = defaultValues;
+              },
+              child: Container(
+                color: Colors.blue,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [Text(defaultValues.join(' - '))],
+                ),
+              ))
         ]),
       ),
       floatingActionButton: const GoBackButton(),
