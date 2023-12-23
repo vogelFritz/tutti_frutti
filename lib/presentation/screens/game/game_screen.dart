@@ -30,7 +30,7 @@ class GameScreen extends ConsumerWidget {
             alignment: Alignment.topLeft,
             child: Padding(
               padding: const EdgeInsets.fromLTRB(20, 20, 0, 40),
-              child: _Columns(fields: fields),
+              child: _CustomColumn(fields: fields),
             )),
       ]),
       floatingActionButton: const GoBackButton(),
@@ -38,9 +38,9 @@ class GameScreen extends ConsumerWidget {
   }
 }
 
-class _Columns extends StatelessWidget {
+class _CustomColumn extends StatelessWidget {
   final List<dynamic> fields;
-  const _Columns({required this.fields});
+  const _CustomColumn({required this.fields});
 
   @override
   Widget build(BuildContext context) {

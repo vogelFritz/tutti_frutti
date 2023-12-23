@@ -1,16 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+
 import 'package:tutti_frutti/presentation/providers/field_provider.dart';
 import 'package:tutti_frutti/presentation/screens.dart';
 import 'package:tutti_frutti/presentation/widgets/buttons.dart';
 
 class GameStartScreen extends ConsumerStatefulWidget {
   static const String name = 'game_start';
+
   const GameStartScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ConsumerStatefulWidget> createState() => GameStartState();
+}
+
+class GameStartState extends ConsumerState<GameStartScreen> {
+  @override
+  void initState() {
+    ref.read(fieldProvider);
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final textController = TextEditingController();
     return Scaffold(
       backgroundColor: Colors.blueGrey,
@@ -24,6 +37,7 @@ class GameStartScreen extends ConsumerStatefulWidget {
               onSubmitted: (value) {
                 ref.read(fieldProvider.notifier).state.add(value);
                 textController.clear();
+                setState(() {});
                 //textController.notifyListeners();
               },
             ),
@@ -43,11 +57,5 @@ class GameStartScreen extends ConsumerStatefulWidget {
       ),
       floatingActionButton: const GoBackButton(),
     );
-  }
-
-  @override
-  ConsumerState<ConsumerStatefulWidget> createState() {
-    // TODO: implement createState
-    throw UnimplementedError();
   }
 }
