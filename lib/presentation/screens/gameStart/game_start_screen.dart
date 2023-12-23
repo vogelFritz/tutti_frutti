@@ -34,6 +34,7 @@ class GameStartState extends ConsumerState<GameStartScreen> {
             height: 60,
             width: 200,
             child: TextField(
+              decoration: const InputDecoration(filled: true),
               controller: textController,
               onSubmitted: (value) {
                 ref.read(fieldProvider.notifier).state.add(value);
@@ -45,17 +46,20 @@ class GameStartState extends ConsumerState<GameStartScreen> {
           ),
           Consumer(builder: (context, ref, _) {
             final updatedFields = ref.watch(fieldProvider);
-            return Wrap(spacing: 10, children: [
-              ...updatedFields.map((field) => Text(field)),
-              (updatedFields.isNotEmpty)
-                  ? IconButton(
-                      onPressed: () {
-                        ref.read(fieldProvider.notifier).state.clear();
-                        setState(() {});
-                      },
-                      icon: const Icon(Icons.delete))
-                  : const SizedBox()
-            ]);
+            return Wrap(
+                crossAxisAlignment: WrapCrossAlignment.center,
+                spacing: 10,
+                children: [
+                  ...updatedFields.map((field) => Text(field)),
+                  (updatedFields.isNotEmpty)
+                      ? IconButton(
+                          onPressed: () {
+                            ref.read(fieldProvider.notifier).state.clear();
+                            setState(() {});
+                          },
+                          icon: const Icon(Icons.delete))
+                      : const SizedBox()
+                ]);
           }),
           FilledButton(
               onPressed: () {
@@ -67,7 +71,9 @@ class GameStartState extends ConsumerState<GameStartScreen> {
                 ref.read(fieldProvider.notifier).state = defaultValues;
               },
               child: Container(
-                color: Colors.blue,
+                decoration: BoxDecoration(
+                    color: Colors.blue,
+                    borderRadius: BorderRadius.circular(20)),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [Text(defaultValues.join(' - '))],
