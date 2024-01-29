@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:tutti_frutti/presentation/providers/field_provider.dart';
-import 'package:tutti_frutti/presentation/screens.dart';
+import 'package:tutti_frutti/presentation/screens/screens.dart';
 import 'package:tutti_frutti/presentation/widgets/buttons.dart';
 
 class GameStartScreen extends ConsumerStatefulWidget {

@@ -1,5 +1,5 @@
 import 'package:go_router/go_router.dart';
-import 'package:tutti_frutti/presentation/screens.dart';
+import 'package:tutti_frutti/presentation/screens/screens.dart';
 
 final appRouter = GoRouter(initialLocation: '/', routes: [
   GoRoute(
@@ -13,5 +13,13 @@ final appRouter = GoRouter(initialLocation: '/', routes: [
   GoRoute(
       name: GameScreen.name,
       path: '/game',
-      builder: (context, state) => const GameScreen())
+      builder: (context, state) => const GameScreen()),
+  GoRoute(
+      name: GameOptionsScreen.name,
+      path: '/game_options',
+      builder: (context, state) => const GameOptionsScreen()),
+  GoRoute(
+      name: WaitingScreen.name,
+      path: '/waiting_screen',
+      builder: (context, state) => const WaitingScreen()),
 ]);
