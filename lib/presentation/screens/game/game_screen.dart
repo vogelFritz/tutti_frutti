@@ -17,6 +17,11 @@ class GameScreen extends ConsumerWidget {
     final random = Random();
     final fields = ref.watch(fieldProvider);
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.black87,
+        title: const Center(
+            child: Text('50s', style: TextStyle(color: Colors.green))),
+      ),
       backgroundColor: Colors.blueGrey,
       body: Stack(children: [
         Align(
