@@ -16,6 +16,8 @@ enum ServerStatus { online, offline, connecting }
 class SocketNotifier extends ChangeNotifier {
   late Socket _socket;
   String nombre = '';
+  final List<String> _eventNames = [];
+  final Map<String, Function> _events = {};
   List<String> nombresSalas = [];
   List<String> usuariosUnidos = [];
   ServerStatus _serverStatus = ServerStatus.connecting;
@@ -24,6 +26,10 @@ class SocketNotifier extends ChangeNotifier {
   Socket get socket => _socket;
 
   SocketNotifier() {
+    onEvent('salaCreada', (nombreSala) {
+      nombresSalas.add(nombreSala);
+      notifyListeners();
+    });
     connect();
   }
   void connect() async {
@@ -48,10 +54,22 @@ class SocketNotifier extends ChangeNotifier {
     for (int caracter in data) {
       mensaje += String.fromCharCode(caracter);
     }
-    if (mensaje.contains('salaCreada:')) {
-      nombre = mensaje.substring(11);
-      nombresSalas.add(nombre);
+    for (String eventName in _eventNames) {
+      if (mensaje.contains(eventName)) {
+        final data = mensaje.substring(eventName.length);
+        _events[eventName]!(data);
+      }
     }
+  }
+
+  void onEvent(String event, Function(String data) handler) {
+    _eventNames.add(event);
+    _events[event] = handler;
+  }
+
+  void emitEvent(String event, [String? data]) {
+    final finalMessage = (data != null) ? event + data : event;
+    _socket.write(finalMessage);
   }
 
   void sendMessageToServer(String message) {
