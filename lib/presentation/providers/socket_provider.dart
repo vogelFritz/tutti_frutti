@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -6,6 +7,7 @@ import 'dart:io';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:tutti_frutti/config/constants/environment.dart';
+import 'package:tutti_frutti/models/sala.dart';
 
 final socketProvider = ChangeNotifierProvider<SocketNotifier>((ref) {
   return SocketNotifier();
@@ -18,8 +20,8 @@ class SocketNotifier extends ChangeNotifier {
   String nombre = '';
   final List<String> _eventNames = [];
   final Map<String, Function> _events = {};
-  List<String> nombresSalas = [];
-  List<String> usuariosUnidos = [];
+  List<Sala> salas = [];
+  Sala? salaSeleccionada;
   ServerStatus _serverStatus = ServerStatus.connecting;
 
   ServerStatus get serverStatus => _serverStatus;
@@ -27,8 +29,14 @@ class SocketNotifier extends ChangeNotifier {
 
   SocketNotifier() {
     onEvent('salaCreada', (nombreSala) {
-      nombresSalas.add(nombreSala);
+      salas.add(Sala(nombre: nombreSala));
       notifyListeners();
+    });
+    onEvent('unirse', (salasJson) {
+      final decodedPlayers = jsonDecode(salasJson);
+      print(decodedPlayers);
+      decodedPlayers.forEach(
+          (player) => salaSeleccionada!.jugadores.add(player['nombre']));
     });
     connect();
   }
@@ -70,9 +78,5 @@ class SocketNotifier extends ChangeNotifier {
   void emitEvent(String event, [String? data]) {
     final finalMessage = (data != null) ? event + data : event;
     _socket.write(finalMessage);
-  }
-
-  void sendMessageToServer(String message) {
-    _socket.write(message);
   }
 }

@@ -1,5 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:tutti_frutti/models/sala.dart';
 import 'package:tutti_frutti/presentation/providers/socket_provider.dart';
 
 class SalasDialog extends ConsumerStatefulWidget {
@@ -16,7 +20,17 @@ class _SalasDialogState extends ConsumerState<SalasDialog> {
       title: const Text('Salas disponibles'),
       content: Row(
         children: [
-          ...socket.nombresSalas.map((nombreSala) => Text(nombreSala)).toList(),
+          ...socket.salas
+              .map((Sala sala) => TextButton(
+                    onPressed: () {
+                      //sala.jugadores.add(socket.nombre);
+                      socket.emitEvent('unirse', jsonEncode(sala));
+                      socket.salaSeleccionada = sala;
+                      context.push('/waiting_screen');
+                    },
+                    child: Text(sala.nombre),
+                  ))
+              .toList(),
         ],
       ),
     );
