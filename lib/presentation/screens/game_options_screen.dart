@@ -4,19 +4,12 @@ import 'package:go_router/go_router.dart';
 import 'package:tutti_frutti/presentation/providers/providers.dart';
 import 'package:tutti_frutti/presentation/widgets/widgets.dart';
 
-class GameOptionsScreen extends ConsumerStatefulWidget {
+class GameOptionsScreen extends ConsumerWidget {
   static String name = 'game_options';
   const GameOptionsScreen({super.key});
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() =>
-      GameOptionsScreenState();
-}
-
-class GameOptionsScreenState extends ConsumerState<GameOptionsScreen> {
-  final _textController = TextEditingController();
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(userProvider);
     return Scaffold(
       appBar: AppBar(
@@ -31,19 +24,10 @@ class GameOptionsScreenState extends ConsumerState<GameOptionsScreen> {
         width: 500,
         child: Column(
           children: [
-            SizedBox(
+            const SizedBox(
               width: 200,
               height: 150,
-              child: TextField(
-                controller: _textController,
-                decoration: const InputDecoration(
-                    label: Text('Tu nombre'), hintText: 'Juan'),
-                onChanged: (_) {
-                  setState(() {
-                    user.nombre = _textController.text;
-                  });
-                },
-              ),
+              child: CustomTextField(),
             ),
             const SizedBox(height: 40),
             Row(mainAxisAlignment: MainAxisAlignment.center, children: [
