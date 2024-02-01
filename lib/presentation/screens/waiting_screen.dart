@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tutti_frutti/models/sala.dart';
-import 'package:tutti_frutti/presentation/providers/socket_provider.dart';
+import 'package:tutti_frutti/presentation/providers/providers.dart';
 
 class WaitingScreen extends ConsumerWidget {
   static String name = 'waiting_screen';
@@ -9,7 +9,7 @@ class WaitingScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final Sala sala = ref.watch(socketProvider).salaSeleccionada!;
+    final Sala sala = ref.watch(userProvider).sala!;
     return Scaffold(
       appBar: AppBar(),
       body: Center(
@@ -19,7 +19,7 @@ class WaitingScreen extends ConsumerWidget {
           color: Colors.blueGrey,
           child: Column(
             children: [
-              Text(ref.read(socketProvider.notifier).salaSeleccionada!.nombre),
+              Text(sala.nombre),
               SingleChildScrollView(
                 child: SizedBox(
                   height: 400,

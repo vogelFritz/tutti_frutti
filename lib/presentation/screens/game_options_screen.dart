@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tutti_frutti/presentation/providers/socket_provider.dart';
+import 'package:tutti_frutti/presentation/providers/providers.dart';
 import 'package:tutti_frutti/presentation/widgets/widgets.dart';
 
 class GameOptionsScreen extends ConsumerStatefulWidget {
@@ -17,7 +17,7 @@ class GameOptionsScreenState extends ConsumerState<GameOptionsScreen> {
   final _textController = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    final socket = ref.watch(socketProvider);
+    final user = ref.watch(userProvider);
     return Scaffold(
       appBar: AppBar(
           leading: IconButton(
@@ -40,7 +40,7 @@ class GameOptionsScreenState extends ConsumerState<GameOptionsScreen> {
                     label: Text('Tu nombre'), hintText: 'Juan'),
                 onChanged: (_) {
                   setState(() {
-                    socket.nombre = _textController.text;
+                    user.nombre = _textController.text;
                   });
                 },
               ),
@@ -48,7 +48,7 @@ class GameOptionsScreenState extends ConsumerState<GameOptionsScreen> {
             const SizedBox(height: 40),
             Row(mainAxisAlignment: MainAxisAlignment.center, children: [
               MaterialButton(
-                  onPressed: socket.nombre.isEmpty
+                  onPressed: user.nombre.isEmpty
                       ? null
                       : () {
                           showDialog(
@@ -59,7 +59,7 @@ class GameOptionsScreenState extends ConsumerState<GameOptionsScreen> {
                   color: Colors.orangeAccent,
                   child: const Text('Abrir sala')),
               MaterialButton(
-                  onPressed: socket.nombre.isEmpty
+                  onPressed: user.nombre.isEmpty
                       ? null
                       : () {
                           showDialog(
