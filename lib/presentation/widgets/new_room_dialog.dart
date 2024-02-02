@@ -13,6 +13,13 @@ class NewRoomDialog extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(userProvider);
     final TextEditingController textController = TextEditingController();
+
+    ref.listen(salaProvider, (_, next) {
+      if (next != null) {
+        context.push('/waiting_screen');
+      }
+    });
+
     return AlertDialog(
       title: const Text('Nombre de la sala'),
       content: TextField(
@@ -28,7 +35,6 @@ class NewRoomDialog extends ConsumerWidget {
                 .read(socketProvider.notifier)
                 .emitEvent('nuevaSala', jsonEncode(sala.toJson()));
             user.sala = sala.nombre;
-            context.push('/waiting_screen');
           },
           icon: const Icon(Icons.check),
         ),
