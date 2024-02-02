@@ -40,7 +40,6 @@ class GameStartState extends ConsumerState<GameStartScreen> {
                 ref.read(fieldProvider.notifier).state.add(value);
                 textController.clear();
                 setState(() {});
-                //textController.notifyListeners();
               },
             ),
           ),

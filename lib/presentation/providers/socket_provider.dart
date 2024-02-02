@@ -1,56 +1,63 @@
 import 'dart:convert';
 import 'dart:typed_data';
-
 import 'dart:io';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:tutti_frutti/config/constants/environment.dart';
 import 'package:tutti_frutti/models/sala.dart';
-import 'package:tutti_frutti/models/user.dart';
 import 'package:tutti_frutti/presentation/providers/providers.dart';
 
 final socketProvider =
     StateNotifierProvider<SocketNotifier, SocketState>((ref) {
-  final user = ref.watch(userProvider);
-  final salas = ref.watch(salasProvider);
-  return SocketNotifier(user, salas);
+  return SocketNotifier(ref);
 });
 
 enum ServerStatus { online, offline, connecting }
 
 class SocketNotifier extends StateNotifier<SocketState> {
-  User user;
-  List<Sala> salas;
+  final StateNotifierProviderRef<SocketNotifier, SocketState> ref;
+  late Socket _socket;
 
-  SocketNotifier(this.user, this.salas) : super(SocketState()) {
-    onEvent('nuevaSala', (nombreSala) {
-      salas.add(Sala(nombre: nombreSala));
+  SocketNotifier(this.ref) : super(SocketState()) {
+    onEvent('nuevaSala', (salaJsonString) {
+      final salaJson = jsonDecode(salaJsonString);
+      final sala = Sala.fromJson(salaJson);
+      ref.read(salasProvider.notifier).update((state) => [...state, sala]);
+      ref
+          .read(userProvider.notifier)
+          .update((state) => state.copyWith(sala: sala));
     });
-    onEvent('unirse', (salasJson) {
-      final decodedPlayers = jsonDecode(salasJson);
-      decodedPlayers
-          .forEach((player) => user.sala!.jugadores.add(player['nombre']));
+    onEvent('unirse', (newPlayer) {
+      ref.read(userProvider.notifier).update((state) => state.copyWith(
+          sala: Sala(
+              nombre: state.sala!.nombre,
+              jugadores: [...state.sala!.jugadores, newPlayer])));
+      ref.read(salasProvider.notifier).update((state) {
+        final aux = [...state];
+        Sala sala = ref.read(userProvider).sala!;
+        final i = aux.indexWhere((s) => s.nombre == sala.nombre);
+        aux[i] = sala;
+        return aux;
+      });
     });
     connect();
   }
   void connect() async {
     try {
       if (Environment.host != null && Environment.port != null) {
-        state.socket = await Socket.connect(
+        _socket = await Socket.connect(
             Environment.host!, int.parse(Environment.port!));
       }
-      state = state.copyWith(
-          serverStatus: ServerStatus.online, socket: state.socket);
-      state.socket.listen(
+      state = state.copyWith(serverStatus: ServerStatus.online);
+      _socket.listen(
         (data) {
           _parseData(data);
         },
         onError: (error) {},
       );
     } catch (e) {
-      state = state.copyWith(
-          serverStatus: ServerStatus.offline, socket: state.socket);
+      state = state.copyWith(serverStatus: ServerStatus.offline);
     }
   }
 
@@ -79,26 +86,20 @@ class SocketNotifier extends StateNotifier<SocketState> {
 
   void emitEvent(String event, [String? data]) {
     final finalMessage = (data != null) ? event + data : event;
-    state.socket.write(finalMessage);
+    _socket.write(finalMessage);
   }
 }
 
 class SocketState {
   final List<String> eventNames;
   final Map<String, Function> events;
-  late Socket socket;
   final ServerStatus serverStatus;
 
   SocketState({
     this.eventNames = const [],
     this.events = const {},
-    Socket? socket,
     this.serverStatus = ServerStatus.connecting,
-  }) {
-    if (socket != null) {
-      this.socket = socket;
-    }
-  }
+  });
 
   SocketState copyWith({
     List<String>? eventNames,
@@ -109,7 +110,6 @@ class SocketState {
       SocketState(
         eventNames: eventNames ?? this.eventNames,
         events: events ?? this.events,
-        socket: socket,
         serverStatus: serverStatus ?? this.serverStatus,
       );
 }

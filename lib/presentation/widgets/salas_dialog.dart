@@ -24,9 +24,12 @@ class _SalasDialogState extends ConsumerState<SalasDialog> {
           ...salas
               .map((Sala sala) => TextButton(
                     onPressed: () {
-                      ref
-                          .read(socketProvider.notifier)
-                          .emitEvent('unirse', jsonEncode(sala));
+                      ref.read(socketProvider.notifier).emitEvent(
+                          'unirse',
+                          jsonEncode({
+                            "room": sala.nombre,
+                            "player": user.nombre,
+                          }));
                       user.sala = sala;
                       context.push('/waiting_screen');
                     },

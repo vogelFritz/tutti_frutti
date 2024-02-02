@@ -18,15 +18,12 @@ class NewRoomDialog extends ConsumerWidget {
       content: TextField(
         controller: textController,
         decoration: const InputDecoration(hintText: 'Sala de Juan'),
-        onChanged: (input) {
-          textController.text = input;
-        },
       ),
       actions: [
         IconButton(
           onPressed: () {
-            final sala = Sala(nombre: textController.text);
-            sala.jugadores = [user.nombre];
+            final sala =
+                Sala(nombre: textController.text, jugadores: [user.nombre]);
             ref
                 .read(socketProvider.notifier)
                 .emitEvent('nuevaSala', jsonEncode(sala.toJson()));
