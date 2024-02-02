@@ -6,38 +6,53 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:tutti_frutti/config/constants/environment.dart';
 import 'package:tutti_frutti/models/sala.dart';
+import 'package:tutti_frutti/models/user.dart';
 import 'package:tutti_frutti/presentation/providers/providers.dart';
 
 final socketProvider =
-    StateNotifierProvider<SocketNotifier, SocketState>((ref) {
+    StateNotifierProvider<SocketNotifier, ServerStatus>((ref) {
   return SocketNotifier(ref);
 });
 
 enum ServerStatus { online, offline, connecting }
 
-class SocketNotifier extends StateNotifier<SocketState> {
-  final StateNotifierProviderRef<SocketNotifier, SocketState> ref;
+class SocketNotifier extends StateNotifier<ServerStatus> {
+  final StateNotifierProviderRef<SocketNotifier, ServerStatus> ref;
   late Socket _socket;
+  final Map<String, Function> _events = {};
 
-  SocketNotifier(this.ref) : super(SocketState()) {
+  SocketNotifier(this.ref) : super(ServerStatus.connecting) {
     onEvent('nuevaSala', (salaJsonString) {
       final salaJson = jsonDecode(salaJsonString);
       final sala = Sala.fromJson(salaJson);
-      ref.read(salasProvider.notifier).update((state) => [...state, sala]);
+      ref
+          .read(salasProvider.notifier)
+          .update((state) => {...state, sala.nombre: sala});
       ref
           .read(userProvider.notifier)
-          .update((state) => state.copyWith(sala: sala));
+          .update((state) => state.copyWith(sala: sala.nombre));
     });
     onEvent('unirse', (newPlayer) {
-      ref.read(userProvider.notifier).update((state) => state.copyWith(
-          sala: Sala(
-              nombre: state.sala!.nombre,
-              jugadores: [...state.sala!.jugadores, newPlayer])));
       ref.read(salasProvider.notifier).update((state) {
-        final aux = [...state];
-        Sala sala = ref.read(userProvider).sala!;
-        final i = aux.indexWhere((s) => s.nombre == sala.nombre);
-        aux[i] = sala;
+        final aux = {...state};
+        String nombreSala = ref.read(userProvider).sala!;
+        if (aux[nombreSala] != null) {
+          aux[nombreSala]!.jugadores.add(User(nombre: newPlayer));
+        }
+        return aux;
+      });
+    });
+    onEvent('ready', (playerName) {
+      final String nombreSala = ref.read(salaProvider)!.nombre;
+      ref.read(salasProvider.notifier).update((state) {
+        final aux = {...state};
+        int i = 0;
+        while (aux[nombreSala]!.jugadores[i].nombre != playerName) {
+          i++;
+        }
+        if (aux[nombreSala]!.jugadores[i].nombre == playerName) {
+          aux[nombreSala]!.jugadores[i].ready = true;
+        }
         return aux;
       });
     });
@@ -49,7 +64,7 @@ class SocketNotifier extends StateNotifier<SocketState> {
         _socket = await Socket.connect(
             Environment.host!, int.parse(Environment.port!));
       }
-      state = state.copyWith(serverStatus: ServerStatus.online);
+      state = ServerStatus.online;
       _socket.listen(
         (data) {
           _parseData(data);
@@ -57,7 +72,7 @@ class SocketNotifier extends StateNotifier<SocketState> {
         onError: (error) {},
       );
     } catch (e) {
-      state = state.copyWith(serverStatus: ServerStatus.offline);
+      state = ServerStatus.offline;
     }
   }
 
@@ -66,50 +81,20 @@ class SocketNotifier extends StateNotifier<SocketState> {
     for (int caracter in data) {
       mensaje += String.fromCharCode(caracter);
     }
-    for (String eventName in state.eventNames) {
+    for (String eventName in _events.keys) {
       if (mensaje.contains(eventName)) {
         final parsedData = mensaje.substring(eventName.length);
-        state.events[eventName]!(parsedData);
+        _events[eventName]!(parsedData);
       }
     }
   }
 
   void onEvent(String event, Function(String data) handler) {
-    state = state.copyWith(eventNames: [
-      ...state.eventNames,
-      event
-    ], events: <String, Function>{
-      ...state.events,
-      event: handler,
-    });
+    _events[event] = handler;
   }
 
   void emitEvent(String event, [String? data]) {
     final finalMessage = (data != null) ? event + data : event;
     _socket.write(finalMessage);
   }
-}
-
-class SocketState {
-  final List<String> eventNames;
-  final Map<String, Function> events;
-  final ServerStatus serverStatus;
-
-  SocketState({
-    this.eventNames = const [],
-    this.events = const {},
-    this.serverStatus = ServerStatus.connecting,
-  });
-
-  SocketState copyWith({
-    List<String>? eventNames,
-    Map<String, Function>? events,
-    Socket? socket,
-    ServerStatus? serverStatus,
-  }) =>
-      SocketState(
-        eventNames: eventNames ?? this.eventNames,
-        events: events ?? this.events,
-        serverStatus: serverStatus ?? this.serverStatus,
-      );
 }

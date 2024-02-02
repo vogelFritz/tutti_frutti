@@ -22,12 +22,12 @@ class NewRoomDialog extends ConsumerWidget {
       actions: [
         IconButton(
           onPressed: () {
-            final sala =
-                Sala(nombre: textController.text, jugadores: [user.nombre]);
+            final sala = Sala(
+                nombre: textController.text, host: user, jugadores: [user]);
             ref
                 .read(socketProvider.notifier)
                 .emitEvent('nuevaSala', jsonEncode(sala.toJson()));
-            user.sala = sala;
+            user.sala = sala.nombre;
             context.push('/waiting_screen');
           },
           icon: const Icon(Icons.check),

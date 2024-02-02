@@ -10,7 +10,7 @@ class HomeScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final socket = ref.watch(socketProvider);
+    final serverStatus = ref.watch(socketProvider);
     final textStyle = Theme.of(context).textTheme.titleLarge;
     return Scaffold(
         backgroundColor: Colors.blueGrey,
@@ -22,11 +22,11 @@ class HomeScreen extends ConsumerWidget {
                   margin: const EdgeInsets.only(top: 35),
                   child: Column(
                     children: [
-                      socket.serverStatus == ServerStatus.online
+                      serverStatus == ServerStatus.online
                           ? const Icon(Icons.check, color: Colors.blue)
-                          : const Icon(Icons.wrong_location, color: Colors.red),
+                          : const Icon(Icons.close, color: Colors.red),
                       IconButton(
-                        onPressed: socket.serverStatus == ServerStatus.online
+                        onPressed: serverStatus == ServerStatus.online
                             ? null
                             : () {
                                 ref.read(socketProvider.notifier).connect();
