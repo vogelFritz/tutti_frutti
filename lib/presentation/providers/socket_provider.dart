@@ -5,9 +5,9 @@ import 'dart:io';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:tutti_frutti/config/constants/environment.dart';
-import 'package:tutti_frutti/models/sala.dart';
-import 'package:tutti_frutti/models/user.dart';
 import 'package:tutti_frutti/presentation/providers/providers.dart';
+
+import '../../models/models.dart';
 
 final socketProvider =
     StateNotifierProvider<SocketNotifier, ServerStatus>((ref) {
@@ -56,8 +56,22 @@ class SocketNotifier extends StateNotifier<ServerStatus> {
         return aux;
       });
     });
+    onEvent('fieldSuggestion', (fieldsSuggestion) {
+      final Map<String, dynamic> fieldsSuggestionJson =
+          jsonDecode(fieldsSuggestion);
+      final suggestion = Suggestion.fromJson(fieldsSuggestionJson);
+
+      ref.read(fieldSuggestionsProvider.notifier).newSuggestion(suggestion);
+    });
+    onEvent('voted', (voteData) {
+      final Map<String, dynamic> voteDataJson = jsonDecode(voteData);
+      ref
+          .read(fieldSuggestionsProvider.notifier)
+          .onVote(voteDataJson['voter'], voteDataJson['vote']);
+    });
     connect();
   }
+
   void connect() async {
     try {
       if (Environment.host != null && Environment.port != null) {
