@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import 'package:tutti_frutti/presentation/providers/providers.dart';
 import '../../../models/models.dart';
@@ -14,6 +15,7 @@ class WaitingScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final Sala sala = ref.watch(salaProvider)!;
     final User user = ref.watch(userProvider);
+    ref.listen(fieldProvider, (_, __) => context.push('/count_down_screen'));
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.blueGrey,
@@ -54,10 +56,9 @@ class WaitingScreen extends ConsumerWidget {
                 ? TextButton(
                     onPressed: sala.allReady
                         ? () {
-                            ref.read(fieldProvider.notifier).update((_) => ref
-                                .read(fieldSuggestionsProvider.notifier)
-                                .mostVotedFields);
-                            // TODO: Ir a la pantalla de la partida
+                            ref
+                                .read(socketProvider.notifier)
+                                .emitEvent('startGame');
                           }
                         : null,
                     child: const Text('Empezar partida'),

@@ -69,6 +69,10 @@ class SocketNotifier extends StateNotifier<ServerStatus> {
           .read(fieldSuggestionsProvider.notifier)
           .onVote(voteDataJson['voter'], voteDataJson['vote']);
     });
+    onEvent('startGame', (_) {
+      ref.read(fieldProvider.notifier).update(
+          (_) => ref.read(fieldSuggestionsProvider.notifier).mostVotedFields);
+    });
     connect();
   }
 
