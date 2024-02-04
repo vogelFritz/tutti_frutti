@@ -17,14 +17,12 @@ class WaitingScreen extends ConsumerWidget {
     final User user = ref.watch(userProvider);
     ref.listen(fieldProvider, (_, __) => context.push('/count_down_screen'));
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.blueGrey,
-      ),
-      backgroundColor: Colors.blueGrey,
+      appBar:
+          AppBar(automaticallyImplyLeading: false, title: Text(sala.nombre)),
       body: Center(
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Text(sala.nombre),
             SingleChildScrollView(
               child: SizedBox(
                 height: 300,
@@ -51,7 +49,9 @@ class WaitingScreen extends ConsumerWidget {
                     }),
               ),
             ),
-            const FieldSuggestions(),
+            SizedBox(
+                width: MediaQuery.of(context).size.width * 0.5,
+                child: const FieldSuggestions()),
             sala.host.nombre == user.nombre
                 ? TextButton(
                     onPressed: sala.allReady
@@ -67,6 +67,12 @@ class WaitingScreen extends ConsumerWidget {
           ],
         ),
       ),
+      floatingActionButton: FloatingActionButton(
+          isExtended: true,
+          onPressed: () {
+            context.pop();
+          },
+          child: const Text('Salir de la sala', textAlign: TextAlign.center)),
     );
   }
 }

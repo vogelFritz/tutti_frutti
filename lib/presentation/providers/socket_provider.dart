@@ -76,7 +76,7 @@ class SocketNotifier extends StateNotifier<ServerStatus> {
     connect();
   }
 
-  void connect() async {
+  Future<void> connect() async {
     try {
       if (Environment.host != null && Environment.port != null) {
         _socket = await Socket.connect(
