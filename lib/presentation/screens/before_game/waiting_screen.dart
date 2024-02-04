@@ -130,7 +130,7 @@ class _FieldSuggestionsState extends ConsumerState<FieldSuggestions> {
                                     .removeWhere((elem) => elem == field);
                               });
                             },
-                            child: const Icon(Icons.close))
+                            child: const Icon(Icons.close, size: 15))
                       ],
                     ),
                     const VerticalDivider(),
