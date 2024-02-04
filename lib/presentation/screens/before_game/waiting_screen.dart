@@ -86,6 +86,7 @@ class FieldSuggestions extends ConsumerStatefulWidget {
 
 class _FieldSuggestionsState extends ConsumerState<FieldSuggestions> {
   late Suggestion _newSuggestion;
+
   @override
   void initState() {
     _newSuggestion =
@@ -112,7 +113,31 @@ class _FieldSuggestionsState extends ConsumerState<FieldSuggestions> {
         },
       ),
       Row(children: [
-        ..._newSuggestion.fields.map((field) => Text('$field --- ')),
+        Expanded(
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(children: [
+              ..._newSuggestion.fields.map((field) => Row(children: [
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(field),
+                        GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                _newSuggestion.fields
+                                    .removeWhere((elem) => elem == field);
+                              });
+                            },
+                            child: const Icon(Icons.close))
+                      ],
+                    ),
+                    const VerticalDivider(),
+                  ])),
+            ]),
+          ),
+        ),
         IconButton(
           onPressed: () {
             ref.read(socketProvider.notifier).emitEvent(
@@ -135,13 +160,19 @@ class _FieldSuggestionsState extends ConsumerState<FieldSuggestions> {
                   }));
             },
             child: ListTile(
-              title: Row(children: [
-                ...suggestion.fields.map((field) => Text('$field --- '))
-              ]),
+              title: Expanded(
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(children: [
+                    ...suggestion.fields.map((field) =>
+                        Row(children: [Text(field), const VerticalDivider()]))
+                  ]),
+                ),
+              ),
               subtitle: Text(suggestion.userName),
               trailing: Text(suggestion.votes.toString()),
             ),
-          )),
+          ))
     ]);
   }
 }

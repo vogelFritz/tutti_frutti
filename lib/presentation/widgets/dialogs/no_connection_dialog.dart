@@ -21,7 +21,7 @@ class NoConnectionDialogState extends ConsumerState<NoConnectionDialog> {
       }
     });
     return AlertDialog(
-      title: const Text('Fallo con la conexión'),
+      title: const Center(child: Text('Fallo la conexión')),
       content: Column(mainAxisSize: MainAxisSize.min, children: [
         const Text('Reintentar'),
         IconButton(
