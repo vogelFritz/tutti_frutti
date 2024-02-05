@@ -14,23 +14,33 @@ class CountDownScreen extends StatefulWidget {
 
 class _CountDownScreenState extends State<CountDownScreen> {
   late int _count;
+  late Timer _timer;
   @override
   void initState() {
-    _count = 3;
     super.initState();
+    _count = 3;
+    _timer = Timer.periodic(const Duration(seconds: 2), (timer) {
+      if (_count > 0) {
+        setState(() {
+          _count--;
+        });
+      } else {
+        setState(() {
+          timer.cancel();
+          context.push('/game');
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    Timer.periodic(const Duration(seconds: 1), (timer) {
-      setState(() {
-        _count--;
-      });
-      if (_count < 1) {
-        timer.cancel();
-        context.push('/game');
-      }
-    });
     return Scaffold(
         body: Center(
             child:

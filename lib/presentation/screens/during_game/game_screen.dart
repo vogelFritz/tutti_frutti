@@ -11,6 +11,7 @@ class GameScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    //return const Scaffold(body: Center(child: Text('gamescreen')));
     final displayLarge = Theme.of(context).textTheme.displayLarge;
     final alphabet =
         List.generate(26, (index) => String.fromCharCode(index + 65));
@@ -22,7 +23,6 @@ class GameScreen extends ConsumerWidget {
         title: const Center(
             child: Text('50s', style: TextStyle(color: Colors.green))),
       ),
-      backgroundColor: Colors.blueGrey,
       body: Stack(children: [
         Align(
             alignment: Alignment.topLeft,
@@ -61,20 +61,22 @@ class _CustomColumn extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final displaySmallTextStyle = Theme.of(context).textTheme.displaySmall;
-    return Column(
-      children: [
-        ...fields.map((field) => Padding(
-              padding: const EdgeInsets.fromLTRB(0, 0, 0, 60),
-              child: SizedBox(
-                  width: 400,
-                  height: 60,
-                  child: TextField(
-                      decoration: InputDecoration(
-                          label: Text(field, style: displaySmallTextStyle),
-                          filled: true,
-                          border: const OutlineInputBorder()))),
-            ))
-      ],
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          ...fields.map((field) => Padding(
+                padding: const EdgeInsets.fromLTRB(0, 0, 0, 60),
+                child: SizedBox(
+                    width: 400,
+                    height: 60,
+                    child: TextField(
+                        decoration: InputDecoration(
+                            label: Text(field, style: displaySmallTextStyle),
+                            filled: true,
+                            border: const OutlineInputBorder()))),
+              ))
+        ],
+      ),
     );
   }
 }

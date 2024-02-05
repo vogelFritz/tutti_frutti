@@ -160,14 +160,12 @@ class _FieldSuggestionsState extends ConsumerState<FieldSuggestions> {
                   }));
             },
             child: ListTile(
-              title: Expanded(
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(children: [
-                    ...suggestion.fields.map((field) =>
-                        Row(children: [Text(field), const VerticalDivider()]))
-                  ]),
-                ),
+              title: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(children: [
+                  ...suggestion.fields.map((field) =>
+                      Row(children: [Text(field), const VerticalDivider()]))
+                ]),
               ),
               subtitle: Text(suggestion.userName),
               trailing: Text(suggestion.votes.toString()),

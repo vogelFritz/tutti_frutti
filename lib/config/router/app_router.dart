@@ -7,10 +7,6 @@ final appRouter = GoRouter(initialLocation: '/', routes: [
       path: '/',
       builder: (context, state) => const HomeScreen()),
   GoRoute(
-      name: GameStartScreen.name,
-      path: '/game_start',
-      builder: (context, state) => const GameStartScreen()),
-  GoRoute(
       name: GameScreen.name,
       path: '/game',
       builder: (context, state) => const GameScreen()),
