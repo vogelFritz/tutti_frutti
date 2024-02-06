@@ -4,3 +4,4 @@ export 'socket_provider.dart';
 export 'user_provider.dart';
 export 'sala_provider.dart';
 export 'field_suggestions_provider.dart';
+export 'letter_provider.dart';

@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'dart:math';
 
-import 'package:tutti_frutti/presentation/providers/field_provider.dart';
+import 'package:tutti_frutti/presentation/providers/providers.dart';
 import 'package:tutti_frutti/presentation/widgets/buttons.dart';
 
 class GameScreen extends ConsumerWidget {
@@ -11,18 +10,10 @@ class GameScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    //return const Scaffold(body: Center(child: Text('gamescreen')));
     final displayLarge = Theme.of(context).textTheme.displayLarge;
-    final alphabet =
-        List.generate(26, (index) => String.fromCharCode(index + 65));
-    final random = Random();
+    final currentLetter = ref.watch(letterProvider);
     final fields = ref.watch(fieldProvider);
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.black87,
-        title: const Center(
-            child: Text('50s', style: TextStyle(color: Colors.green))),
-      ),
       body: Stack(children: [
         Align(
             alignment: Alignment.topLeft,
@@ -31,23 +22,42 @@ class GameScreen extends ConsumerWidget {
               child: _CustomColumn(fields: fields),
             )),
         Align(
-          alignment: Alignment.topRight,
-          child: Padding(
-            padding: const EdgeInsets.all(20),
+            alignment: Alignment.topRight,
             child: Container(
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.black, width: 5),
-                color: Colors.lightGreenAccent,
-                shape: BoxShape.circle,
-              ),
-              width: 100,
-              height: 100,
-              child: Text(alphabet[random.nextInt(alphabet.length)],
-                  style: displayLarge!.copyWith(color: Colors.black)),
-            ),
-          ),
-        ),
+                decoration: BoxDecoration(
+                  color: const Color(0xff616975),
+                  border: Border.all(color: Colors.yellowAccent, width: 2.0),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.all(20),
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.black, width: 5),
+                        color: Colors.lightGreenAccent,
+                        shape: BoxShape.circle,
+                      ),
+                      width: 100,
+                      height: 100,
+                      child: Text(currentLetter,
+                          style: displayLarge!.copyWith(color: Colors.black)),
+                    ),
+                    GestureDetector(
+                        onTap: () {},
+                        child: Container(
+                          margin: const EdgeInsets.all(10),
+                          width: 50,
+                          height: 50,
+                          decoration: BoxDecoration(
+                              color: Colors.red,
+                              shape: BoxShape.circle,
+                              border:
+                                  Border.all(color: Colors.black, width: 2.0)),
+                        )),
+                  ],
+                ))),
       ]),
       floatingActionButton: const GoBackButton(),
     );

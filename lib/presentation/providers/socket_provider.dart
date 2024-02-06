@@ -73,6 +73,13 @@ class SocketNotifier extends StateNotifier<ServerStatus> {
       ref.read(fieldProvider.notifier).update(
           (_) => ref.read(fieldSuggestionsProvider.notifier).mostVotedFields);
     });
+    onEvent('newLetter', (letter) {
+      // TODO: Investigar bug, letter llega con el nombre del evento
+      ref
+          .read(letterProvider.notifier)
+          .update((_) => letter.substring(letter.length - 1));
+      print(letter);
+    });
     connect();
   }
 

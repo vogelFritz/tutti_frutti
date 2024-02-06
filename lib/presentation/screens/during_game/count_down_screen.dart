@@ -19,7 +19,7 @@ class _CountDownScreenState extends State<CountDownScreen> {
   void initState() {
     super.initState();
     _count = 3;
-    _timer = Timer.periodic(const Duration(seconds: 2), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (_count > 0) {
         setState(() {
           _count--;
