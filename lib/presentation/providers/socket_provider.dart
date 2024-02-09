@@ -74,11 +74,9 @@ class SocketNotifier extends StateNotifier<ServerStatus> {
           (_) => ref.read(fieldSuggestionsProvider.notifier).mostVotedFields);
     });
     onEvent('newLetter', (letter) {
-      // TODO: Investigar bug, letter llega con el nombre del evento
       ref
           .read(letterProvider.notifier)
           .update((_) => letter.substring(letter.length - 1));
-      print(letter);
     });
     connect();
   }
@@ -107,18 +105,23 @@ class SocketNotifier extends StateNotifier<ServerStatus> {
       mensaje += String.fromCharCode(caracter);
     }
 
-    // Doesn't work for multiple events sent in a short amount of time
-    //final String receivedEvent = _events.keys.firstWhere(
-    //    (eventName) => mensaje.contains(eventName),
-    //    orElse: () => 'not-found');
-    //print(mensaje);
-    //if (receivedEvent != 'not-found') {
-    //  print(receivedEvent);
-    //  final parsedData = mensaje.substring(receivedEvent.length);
-    //  _events[receivedEvent]!(parsedData);
-    //} else {
-    //  throw EventNotFound();
-    //}
+    List<String> eventsFound = [];
+    List<int> eventPositions = [];
+    for (String eventName in _events.keys) {
+      if (mensaje.contains(eventName)) {
+        eventsFound.add(eventName);
+        eventPositions.add(_indexOfString(mensaje, eventName));
+      }
+    }
+
+    eventPositions.sort();
+    for (int i = 0; i < eventPositions.length - 1; i++) {
+      final currentEventName = eventsFound[i];
+      _events[currentEventName]!(mensaje.substring(
+          eventPositions[i] + currentEventName.length, eventPositions[i + 1]));
+    }
+    _events[eventsFound.last]!(
+        mensaje.substring(eventPositions.last + eventsFound.last.length));
   }
 
   int _indexOfString(String source, String str) {
