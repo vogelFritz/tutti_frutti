@@ -101,20 +101,40 @@ class SocketNotifier extends StateNotifier<ServerStatus> {
     }
   }
 
-  _parseData(Uint8List data) {
+  void _parseData(Uint8List data) {
     String mensaje = '';
     for (int caracter in data) {
       mensaje += String.fromCharCode(caracter);
     }
-    final String receivedEvent = _events.keys.firstWhere(
-        (eventName) => mensaje.contains(eventName),
-        orElse: () => 'not-found');
-    if (receivedEvent != 'not-found') {
-      final parsedData = mensaje.substring(receivedEvent.length);
-      _events[receivedEvent]!(parsedData);
-    } else {
-      throw EventNotFound();
+
+    // Doesn't work for multiple events sent in a short amount of time
+    //final String receivedEvent = _events.keys.firstWhere(
+    //    (eventName) => mensaje.contains(eventName),
+    //    orElse: () => 'not-found');
+    //print(mensaje);
+    //if (receivedEvent != 'not-found') {
+    //  print(receivedEvent);
+    //  final parsedData = mensaje.substring(receivedEvent.length);
+    //  _events[receivedEvent]!(parsedData);
+    //} else {
+    //  throw EventNotFound();
+    //}
+  }
+
+  int _indexOfString(String source, String str) {
+    if (source.isEmpty || str.isEmpty) {
+      throw Exception('indexOfString used incorrectly');
     }
+    String aux = source[0];
+    int i = 0;
+    while (i < source.length - 1 && !aux.contains(str)) {
+      i++;
+      aux += source[i];
+    }
+    if (i < source.length) {
+      return i - (str.length - 1);
+    }
+    return -1;
   }
 
   void onEvent(String event, Function(String data) handler) {
