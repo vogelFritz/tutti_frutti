@@ -106,11 +106,14 @@ class SocketNotifier extends StateNotifier<ServerStatus> {
     for (int caracter in data) {
       mensaje += String.fromCharCode(caracter);
     }
-    for (String eventName in _events.keys) {
-      if (mensaje.contains(eventName)) {
-        final parsedData = mensaje.substring(eventName.length);
-        _events[eventName]!(parsedData);
-      }
+    final String receivedEvent = _events.keys.firstWhere(
+        (eventName) => mensaje.contains(eventName),
+        orElse: () => 'not-found');
+    if (receivedEvent != 'not-found') {
+      final parsedData = mensaje.substring(receivedEvent.length);
+      _events[receivedEvent]!(parsedData);
+    } else {
+      throw EventNotFound();
     }
   }
 
@@ -122,4 +125,9 @@ class SocketNotifier extends StateNotifier<ServerStatus> {
     final finalMessage = (data != null) ? event + data : event;
     _socket.write(finalMessage);
   }
+}
+
+class EventNotFound implements Exception {
+  final String? event;
+  EventNotFound([this.event]);
 }
