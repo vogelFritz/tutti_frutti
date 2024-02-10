@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import 'package:tutti_frutti/presentation/providers/providers.dart';
 import 'package:tutti_frutti/presentation/widgets/buttons.dart';
@@ -13,6 +14,11 @@ class GameScreen extends ConsumerWidget {
     final displayLarge = Theme.of(context).textTheme.displayLarge;
     final currentLetter = ref.watch(letterProvider);
     final fields = ref.watch(fieldProvider);
+    ref.listen(gameStateProvider, (_, next) {
+      if (next == GameState.countingPoints) {
+        context.push('points_screen');
+      }
+    });
     return Scaffold(
       body: Stack(children: [
         Align(
@@ -45,7 +51,9 @@ class GameScreen extends ConsumerWidget {
                           style: displayLarge!.copyWith(color: Colors.black)),
                     ),
                     GestureDetector(
-                        onTap: () {},
+                        onTap: () {
+                          ref.read(socketProvider.notifier).emitEvent('stop');
+                        },
                         child: Container(
                           margin: const EdgeInsets.all(10),
                           width: 50,
@@ -64,12 +72,12 @@ class GameScreen extends ConsumerWidget {
   }
 }
 
-class _CustomColumn extends StatelessWidget {
+class _CustomColumn extends ConsumerWidget {
   final List<String> fields;
   const _CustomColumn({required this.fields});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final displaySmallTextStyle = Theme.of(context).textTheme.displaySmall;
     return SingleChildScrollView(
       child: Column(
@@ -80,10 +88,17 @@ class _CustomColumn extends StatelessWidget {
                     width: 400,
                     height: 60,
                     child: TextField(
-                        decoration: InputDecoration(
-                            label: Text(field, style: displaySmallTextStyle),
-                            filled: true,
-                            border: const OutlineInputBorder()))),
+                      decoration: InputDecoration(
+                          label: Text(field, style: displaySmallTextStyle),
+                          filled: true,
+                          border: const OutlineInputBorder()),
+                      onChanged: (value) => ref
+                          .read(userProvider.notifier)
+                          .update((state) => state.copyWith(fieldValues: {
+                                ...state.fieldValues,
+                                field: value
+                              })),
+                    )),
               ))
         ],
       ),

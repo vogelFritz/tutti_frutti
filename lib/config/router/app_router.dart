@@ -22,4 +22,7 @@ final appRouter = GoRouter(initialLocation: '/', routes: [
       name: CountDownScreen.name,
       path: '/count_down_screen',
       builder: (context, state) => const CountDownScreen()),
+  GoRoute(
+      path: '/points_screen',
+      builder: (context, state) => const PointsScreen()),
 ]);

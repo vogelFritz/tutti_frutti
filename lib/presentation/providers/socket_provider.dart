@@ -72,11 +72,45 @@ class SocketNotifier extends StateNotifier<ServerStatus> {
     onEvent('startGame', (_) {
       ref.read(fieldProvider.notifier).update(
           (_) => ref.read(fieldSuggestionsProvider.notifier).mostVotedFields);
+      ref.read(gameStateProvider.notifier).update((_) => GameState.inGame);
     });
     onEvent('newLetter', (letter) {
       ref
           .read(letterProvider.notifier)
           .update((_) => letter.substring(letter.length - 1));
+    });
+    onEvent('stop', (letter) {
+      final User user = ref.read(userProvider);
+      final userFieldValuesMap = {
+        'user': user.nombre,
+        'fieldValues': user.fieldValues,
+      };
+      emitEvent(
+        'userFieldValues',
+        jsonEncode(userFieldValuesMap),
+      );
+      ref
+          .read(gameStateProvider.notifier)
+          .update((_) => GameState.countingPoints);
+    });
+    onEvent('userFieldValues', (userFieldValues) {
+      final User user = ref.read(userProvider);
+      final userFieldValuesMap = jsonDecode(userFieldValues);
+      ref.read(salasProvider.notifier).update((state) {
+        var stateCopy = {...state};
+        final Sala sala = stateCopy[user.sala!]!;
+        String userName = userFieldValuesMap['user'];
+        var i = 0;
+        while (
+            i < sala.jugadores.length && sala.jugadores[i].nombre != userName) {
+          i++;
+        }
+        if (i < sala.jugadores.length) {
+          sala.jugadores[i].fieldValues = userFieldValuesMap['fieldValues'];
+        }
+        stateCopy[user.sala!] = sala;
+        return stateCopy;
+      });
     });
     connect();
   }
@@ -117,8 +151,9 @@ class SocketNotifier extends StateNotifier<ServerStatus> {
     eventPositions.sort();
     for (int i = 0; i < eventPositions.length - 1; i++) {
       final currentEventName = eventsFound[i];
-      _events[currentEventName]!(mensaje.substring(
-          eventPositions[i] + currentEventName.length, eventPositions[i + 1]));
+      final parsedData = mensaje.substring(
+          eventPositions[i] + currentEventName.length, eventPositions[i + 1]);
+      _events[currentEventName]!(parsedData);
     }
     _events[eventsFound.last]!(
         mensaje.substring(eventPositions.last + eventsFound.last.length));
@@ -126,7 +161,8 @@ class SocketNotifier extends StateNotifier<ServerStatus> {
 
   int _indexOfString(String source, String str) {
     if (source.isEmpty || str.isEmpty) {
-      throw Exception('indexOfString used incorrectly');
+      throw Exception(
+          'indexOfString used incorrectly - neither "source" nor "str" can be empty strings');
     }
     String aux = source[0];
     int i = 0;
