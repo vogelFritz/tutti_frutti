@@ -148,7 +148,6 @@ class SocketNotifier extends StateNotifier<ServerStatus> {
       }
     }
 
-    eventPositions.sort();
     for (int i = 0; i < eventPositions.length - 1; i++) {
       final currentEventName = eventsFound[i];
       final parsedData = mensaje.substring(

@@ -12,16 +12,24 @@ class PointsScreen extends ConsumerWidget {
     final Sala sala = ref.watch(salaProvider)!;
     final fields = ref.watch(fieldProvider);
     return Scaffold(
-      body: ListView.builder(
-        itemCount: fields.length,
-        itemBuilder: (_, i) => ListView.builder(
-          itemCount: sala.jugadores.length,
-          itemBuilder: (_, i) {
-            final jugador = sala.jugadores[i];
-            return ListTile(
-                title: Text(
-                    '${jugador.nombre}: ${jugador.fieldValues[fields[i]]}'));
-          },
+      body: Expanded(
+        child: ListView.builder(
+          itemCount: fields.length,
+          itemBuilder: (_, i) => SizedBox(
+            height: MediaQuery.of(context).size.height * 0.3,
+            width: MediaQuery.of(context).size.width * 0.8,
+            child: SingleChildScrollView(
+              child: ListView.builder(
+                itemCount: sala.jugadores.length,
+                itemBuilder: (_, i) {
+                  final jugador = sala.jugadores[i];
+                  return ListTile(
+                      title: Text(
+                          '${jugador.nombre}: ${jugador.fieldValues[fields[i]]}'));
+                },
+              ),
+            ),
+          ),
         ),
       ),
     );

@@ -16,7 +16,7 @@ class GameScreen extends ConsumerWidget {
     final fields = ref.watch(fieldProvider);
     ref.listen(gameStateProvider, (_, next) {
       if (next == GameState.countingPoints) {
-        context.push('points_screen');
+        context.push('/points_screen');
       }
     });
     return Scaffold(
