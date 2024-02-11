@@ -16,7 +16,7 @@ class NewRoomDialog extends ConsumerWidget {
 
     ref.listen(salaProvider, (_, next) {
       if (next != null) {
-        context.push('/waiting_screen');
+        context.go('/waiting_screen');
       }
     });
 

@@ -30,7 +30,7 @@ class _SalasDialogState extends ConsumerState<SalasDialog> {
                             "player": user.nombre,
                           }));
                       user.sala = sala;
-                      context.push('/waiting_screen');
+                      context.go('/waiting_screen');
                     },
                     child: Text(sala),
                   ))

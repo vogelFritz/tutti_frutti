@@ -24,10 +24,14 @@ class GameOptionsScreen extends ConsumerWidget {
         width: 500,
         child: Column(
           children: [
-            const SizedBox(
+            SizedBox(
               width: 200,
               height: 150,
-              child: CustomTextField(),
+              child: CustomTextField(
+                label: 'Tu nombre',
+                hintText: 'Juan',
+                onChanged: (value) => ref.read(userProvider.notifier).update((state) => state.copyWith(nombre: value)),
+              ),
             ),
             const SizedBox(height: 40),
             Row(mainAxisAlignment: MainAxisAlignment.center, children: [
