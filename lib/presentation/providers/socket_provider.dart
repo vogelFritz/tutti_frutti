@@ -75,9 +75,8 @@ class SocketNotifier extends StateNotifier<ServerStatus> {
       ref.read(gameStateProvider.notifier).update((_) => GameState.inGame);
     });
     onEvent('newLetter', (letter) {
-      ref
-          .read(letterProvider.notifier)
-          .update((_) => letter.substring(letter.length - 1));
+      print('Letra: ($letter)');
+      ref.read(letterProvider.notifier).update((_) => letter);
     });
     onEvent('stop', (letter) {
       final User user = ref.read(userProvider);
@@ -106,7 +105,8 @@ class SocketNotifier extends StateNotifier<ServerStatus> {
           i++;
         }
         if (i < sala.jugadores.length) {
-          sala.jugadores[i].fieldValues = userFieldValuesMap['fieldValues'];
+          sala.jugadores[i].fieldValues =
+              Map<String, String>.from(userFieldValuesMap['fieldValues']);
         }
         stateCopy[user.sala!] = sala;
         return stateCopy;
@@ -139,40 +139,42 @@ class SocketNotifier extends StateNotifier<ServerStatus> {
       mensaje += String.fromCharCode(caracter);
     }
 
-    List<String> eventsFound = [];
-    List<int> eventPositions = [];
-    for (String eventName in _events.keys) {
-      if (mensaje.contains(eventName)) {
-        eventsFound.add(eventName);
-        eventPositions.add(_indexOfString(mensaje, eventName));
+    int i = 0;
+    String leido = '';
+    while (i < mensaje.length) {
+      leido = '$leido${mensaje[i++]}';
+      final eventFound = containsEvent(leido);
+      print('Event found: ($eventFound)');
+      if (eventFound != 'no-event') {
+        leido = '';
+        String secondEvent = containsEvent(leido);
+        while (i < mensaje.length && secondEvent == 'no-event') {
+          leido = '$leido${mensaje[i++]}';
+          secondEvent = containsEvent(leido);
+        }
+        print('Leido: ($leido)');
+        if (secondEvent != 'no-event') {
+          _events[eventFound]!(
+              leido.substring(0, leido.length - secondEvent.length));
+          i -= secondEvent.length + 1;
+          leido = '';
+        } else {
+          _events[eventFound]!(leido);
+        }
       }
     }
-
-    for (int i = 0; i < eventPositions.length - 1; i++) {
-      final currentEventName = eventsFound[i];
-      final parsedData = mensaje.substring(
-          eventPositions[i] + currentEventName.length, eventPositions[i + 1]);
-      _events[currentEventName]!(parsedData);
-    }
-    _events[eventsFound.last]!(
-        mensaje.substring(eventPositions.last + eventsFound.last.length));
   }
 
-  int _indexOfString(String source, String str) {
-    if (source.isEmpty || str.isEmpty) {
-      throw Exception(
-          'indexOfString used incorrectly - neither "source" nor "str" can be empty strings');
+  String containsEvent(String str) {
+    final keysIter = _events.keys.iterator;
+    bool aux = keysIter.moveNext();
+    while (aux && !str.contains(keysIter.current)) {
+      aux = keysIter.moveNext();
     }
-    String aux = source[0];
-    int i = 0;
-    while (i < source.length - 1 && !aux.contains(str)) {
-      i++;
-      aux += source[i];
+    if (aux) {
+      return keysIter.current;
     }
-    if (i < source.length) {
-      return i - (str.length - 1);
-    }
-    return -1;
+    return 'no-event';
   }
 
   void onEvent(String event, Function(String data) handler) {
