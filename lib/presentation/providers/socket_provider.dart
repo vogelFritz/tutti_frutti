@@ -82,7 +82,10 @@ class SocketNotifier extends StateNotifier<ServerStatus> {
       final User user = ref.read(userProvider);
       final userFieldValuesMap = {
         'user': user.nombre,
-        'fieldValues': user.fieldValues,
+        'fieldValues': {
+          ...user.fieldValues.map((String fieldName, FieldAnswer fieldAnswer) =>
+              MapEntry(fieldName, fieldAnswer.toJson()))
+        },
       };
       emitEvent(
         'userFieldValues',
@@ -105,8 +108,10 @@ class SocketNotifier extends StateNotifier<ServerStatus> {
           i++;
         }
         if (i < sala.jugadores.length) {
-          sala.jugadores[i].fieldValues =
-              Map<String, String>.from(userFieldValuesMap['fieldValues']);
+          sala.jugadores[i].fieldValues = Map<String, FieldAnswer>.from({
+            ...(userFieldValuesMap['fieldValues'] as Map<String, dynamic>)
+          }.map((fieldName, fieldAnswer) =>
+              MapEntry(fieldName, FieldAnswer.fromJson(fieldAnswer))));
         }
         stateCopy[user.sala!] = sala;
         return stateCopy;
@@ -143,14 +148,14 @@ class SocketNotifier extends StateNotifier<ServerStatus> {
     String leido = '';
     while (i < mensaje.length) {
       leido = '$leido${mensaje[i++]}';
-      final eventFound = containsEvent(leido);
+      final eventFound = _containsEvent(leido);
       print('Event found: ($eventFound)');
       if (eventFound != 'no-event') {
         leido = '';
-        String secondEvent = containsEvent(leido);
+        String secondEvent = _containsEvent(leido);
         while (i < mensaje.length && secondEvent == 'no-event') {
           leido = '$leido${mensaje[i++]}';
-          secondEvent = containsEvent(leido);
+          secondEvent = _containsEvent(leido);
         }
         print('Leido: ($leido)');
         if (secondEvent != 'no-event') {
@@ -165,13 +170,13 @@ class SocketNotifier extends StateNotifier<ServerStatus> {
     }
   }
 
-  String containsEvent(String str) {
+  String _containsEvent(String str) {
     final keysIter = _events.keys.iterator;
-    bool aux = keysIter.moveNext();
-    while (aux && !str.contains(keysIter.current)) {
-      aux = keysIter.moveNext();
+    bool quedanEventos = keysIter.moveNext();
+    while (quedanEventos && !str.contains(keysIter.current)) {
+      quedanEventos = keysIter.moveNext();
     }
-    if (aux) {
+    if (quedanEventos) {
       return keysIter.current;
     }
     return 'no-event';

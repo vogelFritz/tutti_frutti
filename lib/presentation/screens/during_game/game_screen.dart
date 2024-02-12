@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tutti_frutti/models/models.dart';
 
 import 'package:tutti_frutti/presentation/providers/providers.dart';
 import 'package:tutti_frutti/presentation/widgets/buttons.dart';
@@ -96,7 +97,7 @@ class _CustomColumn extends ConsumerWidget {
                           .read(userProvider.notifier)
                           .update((state) => state.copyWith(fieldValues: {
                                 ...state.fieldValues,
-                                field: value
+                                field: FieldAnswer(answer: value)
                               })),
                     )),
               ))

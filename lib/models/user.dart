@@ -4,7 +4,7 @@ class User {
   bool ready;
   bool voted;
   int points;
-  Map<String, String> fieldValues;
+  Map<String, FieldAnswer> fieldValues;
 
   User({
     this.nombre = '',
@@ -21,7 +21,7 @@ class User {
     bool? ready,
     bool? voted,
     int? points,
-    Map<String, String>? fieldValues,
+    Map<String, FieldAnswer>? fieldValues,
   }) =>
       User(
         nombre: nombre ?? this.nombre,
@@ -34,4 +34,19 @@ class User {
 
   factory User.fromJson(Map<String, dynamic> json) =>
       User(nombre: json['nombre']);
+}
+
+class FieldAnswer {
+  final int points;
+  final String answer;
+  FieldAnswer({this.points = 5, required this.answer});
+  factory FieldAnswer.fromJson(Map<String, dynamic> jsonMap) => FieldAnswer(
+        answer: jsonMap['answer'],
+        points: int.parse(jsonMap['points']),
+      );
+
+  Map<String, dynamic> toJson() => {
+        'answer': answer,
+        'points': points.toString(),
+      };
 }
