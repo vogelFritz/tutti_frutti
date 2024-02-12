@@ -75,7 +75,6 @@ class SocketNotifier extends StateNotifier<ServerStatus> {
       ref.read(gameStateProvider.notifier).update((_) => GameState.inGame);
     });
     onEvent('newLetter', (letter) {
-      print('Letra: ($letter)');
       ref.read(letterProvider.notifier).update((_) => letter);
     });
     onEvent('stop', (letter) {
@@ -94,6 +93,9 @@ class SocketNotifier extends StateNotifier<ServerStatus> {
       ref
           .read(gameStateProvider.notifier)
           .update((_) => GameState.countingPoints);
+      ref
+          .read(userProvider.notifier)
+          .update((state) => state.copyWith(ready: false));
     });
     onEvent('userFieldValues', (userFieldValues) {
       final User user = ref.read(userProvider);
@@ -149,7 +151,6 @@ class SocketNotifier extends StateNotifier<ServerStatus> {
     while (i < mensaje.length) {
       leido = '$leido${mensaje[i++]}';
       final eventFound = _containsEvent(leido);
-      print('Event found: ($eventFound)');
       if (eventFound != 'no-event') {
         leido = '';
         String secondEvent = _containsEvent(leido);
@@ -157,7 +158,6 @@ class SocketNotifier extends StateNotifier<ServerStatus> {
           leido = '$leido${mensaje[i++]}';
           secondEvent = _containsEvent(leido);
         }
-        print('Leido: ($leido)');
         if (secondEvent != 'no-event') {
           _events[eventFound]!(
               leido.substring(0, leido.length - secondEvent.length));

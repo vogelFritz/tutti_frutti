@@ -49,4 +49,13 @@ class FieldAnswer {
         'answer': answer,
         'points': points.toString(),
       };
+
+  FieldAnswer copyWith({
+    String? answer,
+    int? points,
+  }) =>
+      FieldAnswer(
+        answer: answer ?? this.answer,
+        points: points ?? this.points,
+      );
 }
